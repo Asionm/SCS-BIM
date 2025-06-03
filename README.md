@@ -1,6 +1,6 @@
 # 建筑工程施工进度智能编排 (SCS-BIM)
-## 项目简介
 [English ](README_en.md)|[中文](README.md)
+## 项目简介
 本项目是一个面向建筑工程的施工进度智能编制平台，用户只需上传一份标准 IFC 建筑信息模型文件，系统将自动完成以下任务：
 
 * 解析模型中的构件类型、楼层信息和物理量数据；
@@ -147,6 +147,6 @@ LangChainConfig(
 
 ## 示例展示
 <video controls width="800">
-  <source src="docs/demo.mp4" type="video/mp4">
+  <source src="https://github.com/Asionm/SCS-BIM/blob/main/docs/demo.mp4" type="video/mp4">
   您的浏览器不支持视频播放。
 </video>

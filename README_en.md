@@ -154,7 +154,7 @@ Ensure Ollama is running and the model is loaded.
 ## Demo
 
 <video controls width="800">
-  <source src="docs/demo.mp4" type="video/mp4">
+  <source src="https://github.com/Asionm/SCS-BIM/blob/main/docs/demo.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
