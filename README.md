@@ -146,7 +146,4 @@ LangChainConfig(
 
 
 ## 示例展示
-<video controls width="800">
-  <source src="https://github.com/Asionm/SCS-BIM/raw/main/docs/demo.mp4" type="video/mp4">
-  您的浏览器不支持视频播放。
-</video>
+![demo](https://github.com/Asionm/SCS-BIM/blob/main/docs/demo.gif)
