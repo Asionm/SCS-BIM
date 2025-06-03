@@ -1,0 +1,58 @@
+{
+  "repeat_by_floor": true,
+  "phase_sequence": [
+    {
+      "id": "T-{level}-EXCAV",
+      "phase": "土方工程",
+      "description": "{level} 土方开挖",
+      "components": [
+        {"category": "土方工程"}
+      ]
+    },
+    {
+      "id": "T-{level}-SLAB",
+      "phase": "主体工程",
+      "description": "{level} 楼板施工",
+      "components": [
+        {"category": "楼板"}
+      ],
+      "depends_on": "T-{prev_level}-BEAM"
+    },
+    {
+      "id": "T-{level}-COLUMN",
+      "phase": "主体工程",
+      "description": "{level} 柱施工",
+      "components": [
+        {"category": "柱"}
+      ],
+      "depends_on": "T-{level}-SLAB"
+    },
+    {
+      "id": "T-{level}-WALL",
+      "phase": "砌筑工程",
+      "description": "{level} 砌筑墙施工",
+      "components": [
+        {"category": "砌筑墙"}
+      ],
+      "depends_on": "T-{level}-SLAB"
+    },
+    {
+      "id": "T-{level}-BEAM",
+      "phase": "主体工程",
+      "description": "{level} 梁施工",
+      "components": [
+        {"category": "梁"}
+      ],
+      "depends_on": "T-{level}-COLUMN"
+    },
+    {
+      "id": "T-{level}-STAIR",
+      "phase": "主体工程",
+      "description": "{level} 楼梯施工",
+      "components": [
+        {"category": "楼梯"}
+      ],
+      "depends_on": "T-{level}-BEAM"
+    }
+  ]
+}

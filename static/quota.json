@@ -1,0 +1,38 @@
+[
+  {
+    "name": "挖掘机挖一般土方",
+    "description": "使用挖掘机进行场地一般土壤开挖，适用于基础土方",
+    "unit": "10m³",
+    "labor_days": 0.22
+  },
+  {
+    "name": "混凝土矩形柱",
+    "description": "模板、钢筋、混凝土施工的矩形截面结构柱",
+    "unit": "10m³",
+    "labor_days": 5.621
+  },
+  {
+    "name": "混凝土矩形梁",
+    "description": "模板、钢筋、混凝土施工的矩形截面结构梁",
+    "unit": "10m³",
+    "labor_days": 2.414
+  },
+  {
+    "name": "混凝土有梁板",
+    "description": "含主梁与次梁支撑的现浇混凝土楼板",
+    "unit": "10m³",
+    "labor_days": 2.426
+  },
+  {
+    "name": "混凝土直形楼梯",
+    "description": "直线形式的现浇钢筋混凝土楼梯",
+    "unit": "10m²",
+    "labor_days": 2.138
+  },
+  {
+    "name": "实心砖实砌墙",
+    "description": "采用粘土砖或混凝土砖砌筑的非装饰性承重墙体",
+    "unit": "10m³",
+    "labor_days": 7.852
+  }
+]

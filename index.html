@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>建筑工程施工进度智能编制平台</title>
+<link href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css" rel="stylesheet">
+<script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
+
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0; padding: 20px;
+    /* 动态渐变背景 */
+    background: linear-gradient(-45deg, #1e3c72, #2a5298, #1e3c72, #0f2027);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #e0e6f1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  @keyframes gradientBG {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+
+  h2 {
+    margin-bottom: 30px;
+    font-weight: 700;
+    font-size: 2.8rem;
+    letter-spacing: 1.2px;
+    text-shadow: 0 0 10px rgba(255,255,255,0.7);
+  }
+
+  #uploadSection {
+    max-width: 600px; width: 100%;
+    background: rgba(255 255 255 / 0.1);
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  #fileInput {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1.1rem;
+    background: rgba(255 255 255 / 0.2);
+    color: #f0f0f0;
+    transition: background-color 0.3s ease;
+  }
+  #fileInput:hover, #fileInput:focus {
+    background: rgba(255 255 255 / 0.35);
+    outline: none;
+  }
+#uploadBtn {
+  display: block;
+  margin: 20px auto;    /* 水平居中 */
+  width: 60%;            /* 控制按钮宽度，看起来更协调 */
+  padding: 14px 0;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(90deg, #3f51b5, #1a237e);
+  box-shadow: 0 0 20px #3f51b5aa;
+  transition: all 0.3s ease;
+}
+#uploadBtn:hover {
+  background: linear-gradient(90deg, #283593, #0d133f);
+  box-shadow: 0 0 35px #283593cc;
+}
+#uploadBtn:active {
+  transform: scale(0.98);
+}
+
+
+  /* 进度条容器 */
+  #progressBarContainer {
+    width: 100%;
+    height: 24px;
+    background: rgba(255 255 255 / 0.15);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 25px;
+    display: none;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+  }
+  /* 进度条本体 */
+  #progressBar {
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #ff4081, #7c4dff);
+    box-shadow: 0 0 10px #ff4081aa;
+    border-radius: 20px;
+    transition: width 0.3s ease;
+  }
+  #progressPercent {
+    margin-top: 8px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 1.5px;
+    color: #ffd6e8;
+    text-shadow: 0 0 4px #ff4081cc;
+  }
+
+  /* 日志框 */
+  #progressLogs {
+    max-height: 180px;
+    overflow-y: auto;
+    background: rgba(255 255 255 / 0.12);
+    border-radius: 14px;
+    padding: 15px 20px;
+    margin-top: 25px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #eee;
+    font-family: 'Consolas', monospace;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+  }
+
+  /* 甘特图区域 */
+  #ganttSection {
+    max-width: 900px;
+    width: 90vw;
+    margin: 50px auto 0;
+    background: rgba(255 255 255 / 0.1);
+    padding: 25px 35px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(50,0,255,0.3);
+    display: none;
+    color: #fff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  #ganttTitle {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    text-shadow: 0 0 15px #7c4dffaa;
+  }
+
+  .gantt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  .gantt-table thead tr {
+    background: linear-gradient(90deg, #7c4dff, #3f51b5);
+    color: white;
+  }
+  .gantt-table th, .gantt-table td {
+    border: 1px solid #555;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  .gantt-bar {
+    height: 26px;
+    background: linear-gradient(90deg, #ff4081, #7c4dff);
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 0 15px #ff4081cc;
+  }
+  .gantt-bar span {
+    position: absolute;
+    left: 10px;
+    top: 3px;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    text-shadow: 0 0 6px rgba(0,0,0,0.7);
+  }
+</style>
+
+</head>
+<body>
+  <h2>建筑工程施工进度计划智能编制小程序</h2>
+
+  <!-- 上传区域 -->
+  <div id="uploadSection">
+    <input type="file" id="fileInput" accept=".ifc" />
+    <button id="uploadBtn">上传并开始处理</button>
+
+    <div id="progressBarContainer">
+      <div id="progressBar"></div>
+    </div>
+    <div id="progressPercent"></div>
+    <pre id="progressLogs"></pre>
+  </div>
+
+  <!-- 甘特图区域 -->
+  <div id="ganttSection" style="display: none;">
+    <div id="ganttTitle">施工进度甘特图</div>
+
+    <!-- 缩放控制按钮 -->
+    <div style="margin-bottom: 10px; text-align: center;">
+      <button onclick="setZoom('day')">日视图</button>
+      <button onclick="setZoom('week')">周视图</button>
+      <button onclick="setZoom('month')">月视图</button>
+      <button onclick="setZoom('quarter')">季度视图</button>
+      <button onclick="setZoom('year')">年视图</button>
+    </div>
+
+    <!-- 甘特图容器 -->
+    <div id="ganttContainer" style="width:100%; overflow-x:auto;">
+      <div id="gantt_here" style="width:100%; height:500px;"></div>
+    </div>
+
+    <!-- CSV 下载链接 -->
+    <div id="csvDownload" style="display: none; text-align: center; margin-top: 10px;">
+      <a id="csvLink" href="#" download="schedule.csv" class="download-link" style="
+        padding: 10px 20px;
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        color: #fff;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 0 15px rgba(0, 114, 255, 0.5);
+        transition: background 0.3s ease;">
+        📥 下载CSV进度表
+      </a>
+    </div>
+  </div>
+
+  <!-- 引入 dhtmlxGantt -->
+  <link href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css" rel="stylesheet" />
+  <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
+  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+
+  <script>
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileInput = document.getElementById('fileInput');
+    const progressBarContainer = document.getElementById('progressBarContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressLogs = document.getElementById('progressLogs');
+    const uploadSection = document.getElementById('uploadSection');
+    const ganttSection = document.getElementById('ganttSection');
+
+    const socket = io('http://localhost:5000');
+    let currentPercent = 0;
+
+    // 生成 CSV 内容字符串
+    function generateCSV(schedule) {
+      const header = ['name,start,end'];
+      const rows = schedule.map(item =>
+        `${item.name || ''},${item.start || ''},${item.end || ''}`
+      );
+      return header.concat(rows).join('\n');
+    }
+
+    socket.on('connect', () => logMessage('✅ WebSocket 已连接'));
+
+    socket.on('progress', data => {
+      logMessage(`🚧 [${data.step}] ${data.message}`);
+      currentPercent += 15;
+      if (currentPercent > 95) currentPercent = 95;
+      updateProgressBar(currentPercent);
+    });
+
+    socket.on('done', data => {
+      logMessage('✅ 处理完成！');
+      updateProgressBar(100);
+
+      if (Array.isArray(data.schedule)) {
+        const csvContent = generateCSV(data.schedule);
+        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' }); // 加BOM避免Excel乱码
+        const url = URL.createObjectURL(blob);
+
+        const link = document.getElementById("csvLink");
+        link.href = url;
+        link.download = "schedule.csv";
+        document.getElementById("csvDownload").style.display = "block";
+      }
+
+      setTimeout(() => {
+        fadeOutUploadShowGantt(data.schedule);
+      }, 800);
+    });
+
+    socket.on('error', data => {
+      logMessage(`❌ 错误：${data.message}`);
+    });
+
+    uploadBtn.addEventListener('click', () => {
+      const file = fileInput.files[0];
+      if (!file) return alert('请先选择一个IFC文件');
+
+      currentPercent = 0;
+      updateProgressBar(0);
+      progressLogs.textContent = '';
+      progressBarContainer.style.display = 'block';
+      logMessage('⬆️ 开始上传文件...');
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('http://localhost:5000/upload', {
+        method: 'POST',
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) return logMessage(`上传失败：${data.error}`);
+          logMessage('✅ 文件上传成功，准备开始处理');
+          socket.emit('start_processing', { filepath: data.filepath });
+        })
+        .catch(err => {
+          logMessage(`上传异常：${err.message}`);
+        });
+    });
+
+    function updateProgressBar(percent) {
+      progressBar.style.width = percent + '%';
+      progressPercent.textContent = percent + '%';
+    }
+
+    function logMessage(msg) {
+      progressLogs.textContent += msg + '\n';
+      progressLogs.scrollTop = progressLogs.scrollHeight;
+    }
+
+    function fadeOutUploadShowGantt(schedule) {
+      uploadSection.style.transition = 'opacity 0.8s ease';
+      uploadSection.style.opacity = 0;
+
+      setTimeout(() => {
+        uploadSection.style.display = 'none';
+        ganttSection.style.display = 'block';
+        ganttSection.style.opacity = 0;
+        showGantt(schedule);
+        setTimeout(() => {
+          ganttSection.style.transition = 'opacity 0.8s ease';
+          ganttSection.style.opacity = 1;
+        }, 50);
+      }, 800);
+    }
+
+    function showGantt(schedule) {
+      const container = document.getElementById('ganttContainer');
+      const ganttDiv = document.getElementById('gantt_here');
+
+      if (!container || !ganttDiv) {
+        console.error('甘特图容器不存在');
+        return;
+      }
+
+      if (!Array.isArray(schedule) || schedule.length === 0) {
+        ganttDiv.innerHTML = '<p style="color: #fff;">无任务数据</p>';
+        return;
+      }
+
+      const tasks = {
+        data: schedule.map((item, i) => ({
+          id: i + 1,
+          text: item.name || `任务${i + 1}`,
+          start_date: item.start,
+          end_date: item.end,
+          progress: 0.5
+        }))
+      };
+
+      gantt.config.date_format = "%Y-%m-%d";
+      gantt.init("gantt_here");
+      gantt.parse(tasks);
+
+      setZoom("quarter");
+    }
+
+    function setZoom(level) {
+      switch (level) {
+        case "day":
+          gantt.config.scale_unit = "day";
+          gantt.config.date_scale = "%Y-%m-%d";
+          gantt.config.subscales = [];
+          break;
+        case "week":
+          gantt.config.scale_unit = "week";
+          gantt.config.date_scale = "第 %W 周";
+          gantt.config.subscales = [
+            { unit: "day", step: 1, date: "%m/%d" }
+          ];
+          break;
+        case "month":
+          gantt.config.scale_unit = "month";
+          gantt.config.date_scale = "%Y年%m月";
+          gantt.config.subscales = [
+            { unit: "week", step: 1, date: "第%W周" }
+          ];
+          break;
+        case "year":
+          gantt.config.scale_unit = "year";
+          gantt.config.date_scale = "%Y 年";
+          gantt.config.subscales = [
+            { unit: "month", step: 1, date: "%m 月" }
+          ];
+          break;
+        case "quarter":
+          gantt.config.scale_unit = "month";
+          gantt.config.subscales = [];
+          gantt.templates.date_scale = function(date) {
+            const month = date.getMonth();
+            const quarter = Math.floor(month / 3) + 1;
+            return `${date.getFullYear()}年第 ${quarter} 季度`;
+          };
+          gantt.config.step = 3;
+          break;
+        default:
+          gantt.templates.date_scale = null;
+          gantt.config.step = 1;
+          break;
+      }
+      if (level !== 'quarter') {
+        gantt.templates.date_scale = null;
+        gantt.config.step = 1;
+      }
+      gantt.render();
+    }
+  </script>
+</body>
+
+
+</html>
